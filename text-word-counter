@@ -1,0 +1,28 @@
+class analysedText(object):
+    
+    def __init__ (self, text):
+        fmtText = text.lower()
+        fmtText = fmtText.replace(",","").replace("!","").replace(".","").replace("?","")
+        self.fmtText = fmtText
+        
+    def freqAll(self):        
+        split_text = self.fmtText.split()
+        dictionary = {}
+        for each_word in split_text:
+            if each_word in dictionary:
+                current_value = dictionary[each_word]
+                new_value = current_value + 1
+                dictionary[each_word] = new_value
+            else:
+                dictionary[each_word] = 1
+        return dictionary
+        
+    
+    def freqOf(self,word):
+        split_text = self.fmtText.split()
+        word_value = 0
+        for each_word in split_text:
+            if each_word == word.lower():
+                word_value = word_value + 1
+        return word_value
+        
