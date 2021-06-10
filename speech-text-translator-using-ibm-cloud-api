@@ -1,0 +1,44 @@
+#based on Joseph Santarcangelo work for IBM Developer Skills
+
+#install necessary libraries
+!pip install ibm_watson wget
+
+#load packages
+from ibm_watson import SpeechToTextV1 
+import json
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+
+#configure API settings
+url_s2t = "" #enter service end point here
+iam_apikey_s2t = "" #enter api key here
+
+#instantiate authenticator and speech-to-text functionality
+authenticator = IAMAuthenticator(iam_apikey_s2t)
+s2t = SpeechToTextV1(authenticator=authenticator)
+s2t.set_service_url(url_s2t)
+
+#check whether instantation worked
+s2t
+
+#download an example mp3 file and assign it to filename
+!wget -O PolynomialRegressionandPipelines.mp3  https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-PY0101EN-SkillsNetwork/labs/Module%205/data/PolynomialRegressionandPipelines.mp3
+filename='PolynomialRegressionandPipelines.mp3'
+
+#opens file (with open, to auto-close after completion) and send request for conversion to Watson
+with open(filename, mode="rb")  as wav:
+    response = s2t.recognize(audio=wav, content_type='audio/mp3')
+    
+#check whether response worked
+response.result
+
+#make the json file more readable
+from pandas import json_normalize
+json_normalize(response.result['results'],"alternatives")
+
+#get individual strings (line 0)
+recognized_text=response.result['results'][0]["alternatives"][0]["transcript"]
+type(recognized_text)
+
+#check whether getting the text 
+recognized_text
+
