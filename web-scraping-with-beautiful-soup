@@ -1,0 +1,104 @@
+#Having accessed and stored web content, let's scrape it
+
+#installing bs4 package
+!pip install bs4
+
+#import libraries
+from bs4 import BeautifulSoup # this module helps in web scrapping.
+import requests  # this module helps us to download a web page
+
+#put your html body here
+html="<!DOCTYPE html><html><head><title>Page Title</title></head><body><h3><b id='boldest'>Lebron James</b></h3><p> Salary: $ 92,000,000 </p><h3> Stephen Curry</h3><p> Salary: $85,000, 000 </p><h3> Kevin Durant </h3><p> Salary: $73,200, 000</p></body></html>"
+
+#making it a nested data structure
+soupped_html = BeautifulSoup(html, 'html5lib')
+
+#have a look at the soup
+print(soupped_html.prettify())
+
+#checking the title tag
+tag_object=soupped_html.title
+print("tag object:",tag_object)
+type(tag_object)
+
+#checking the h3 tag (first one)
+tag_object=soupped_html.h3
+tag_object
+
+#show the child (having tag b)
+tag_child =tag_object.b
+tag_child
+
+#show the parent
+parent_tag=tag_child.parent
+parent_tag
+
+#find the next sibling
+sibling_1=tag_object.next_sibling
+sibling_1
+
+#accessing a tags attributes
+tag_child['id'] #accessing id attributes
+tag_child.get('id') #accessing id attributes, way 2
+tag_child.attrs #accessing all attributes
+
+#get only the string within a tag
+tag_string=tag_child.string
+tag_string
+
+#convert from NavigableString to Python string
+type(tag_string)
+unicode_string = str(tag_string)
+unicode_string
+type(unicode_string)
+
+#use Beautiful Soup filter
+table="<table><tr><td id='flight'>Flight No</td><td>Launch site</td> <td>Payload mass</td></tr><tr> <td>1</td><td><a href='https://en.wikipedia.org/wiki/Florida'>Florida<a></td><td>300 kg</td></tr><tr><td>2</td><td><a href='https://en.wikipedia.org/wiki/Texas'>Texas</a></td><td>94 kg</td></tr><tr><td>3</td><td><a href='https://en.wikipedia.org/wiki/Florida'>Florida<a> </td><td>80 kg</td></tr></table>"
+
+#soupify the table
+table_bs = BeautifulSoup(table, 'html5lib')
+
+#find all ethod looks through a tag’s descendants and retrieves all descendants that match your filters.
+# The Method signature for find_all(name, attrs, recursive, string, limit, **kwargs)
+# The result is a Python Iterable just like a list, each element is a <code>tag</code> object:
+
+table_rows=table_bs.find_all('tr')
+table_rows
+
+first_row =table_rows[0]
+first_row
+print(type(first_row))
+first_row.td
+
+for i,row in enumerate(table_rows):
+    print("row",i,"is",row)
+
+
+for i,row in enumerate(table_rows):
+    print("row",i)
+    cells=row.find_all('td')
+    for j,cell in enumerate(cells):
+        print('colunm',j,"cell",cell)
+        
+        
+table_bs.find_all(id="flight")
+list_input=table_bs.find_all(href="https://en.wikipedia.org/wiki/Florida")
+list_input
+
+table_bs.find_all(href=True)
+
+
+#Lets download and scrape a website for all content
+url = "https://plato.stanford.edu/contents.html"
+data  = requests.get(url).text 
+#soupify it
+soup = BeautifulSoup(data,"html5lib")
+
+#get all the links
+for link in soup.find_all('a',href=True):  # in html anchor/link is represented by the tag
+    print(link.get('href'))
+
+#find all images
+for link in soup.find_all('img'):# in html image is represented by the tag <img>
+    print(link)
+    print(link.get('src'))
